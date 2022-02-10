@@ -10,12 +10,16 @@ import QuartzCore
 import SceneKit
 
 class GameViewController: UIViewController {
+    private var scnView: SCNView {
+        // retrieve the SCNView
+        view as! SCNView
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // create a new scene
-        let scene = SCNScene(named: "art.scnassets/ship.scn")!
+        let scene = SCNScene(named: "art.scnassets/solarSystem.scn")!
         
         // create and add a camera to the scene
         let cameraNode = SCNNode()
@@ -38,15 +42,17 @@ class GameViewController: UIViewController {
         ambientLightNode.light!.type = .ambient
         ambientLightNode.light!.color = UIColor.darkGray
         scene.rootNode.addChildNode(ambientLightNode)
-        
-        // retrieve the ship node
-        let ship = scene.rootNode.childNode(withName: "ship", recursively: true)!
-        
-        // animate the 3d object
-        ship.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 2, z: 0, duration: 1)))
-        
-        // retrieve the SCNView
-        let scnView = self.view as! SCNView
+
+        let sun = scene.rootNode.childNode(withName: "sun", recursively: true)!
+        let earth = scene.rootNode.childNode(withName: "earth", recursively: true)!
+        let moon = scene.rootNode.childNode(withName: "moon", recursively: true)!
+
+        earth.pivot = sun.pivot
+        earth.runAction(.moveBy(x: 3, y: 0, z: 0, duration: .zero))
+        earth.runAction(.repeatForever(.rotateBy(x: 0, y: .pi * 2, z: 0, duration: 1)))
+
+//        moon.runAction(.move(to: .init(1, 0, 0), duration: .zero))
+//        moon.runAction(.repeatForever(.rotateBy(x: 0, y: .pi * 2, z: 0, duration: 5)))
         
         // set the scene to the view
         scnView.scene = scene
@@ -67,9 +73,6 @@ class GameViewController: UIViewController {
     
     @objc
     func handleTap(_ gestureRecognize: UIGestureRecognizer) {
-        // retrieve the SCNView
-        let scnView = self.view as! SCNView
-        
         // check what nodes are tapped
         let p = gestureRecognize.location(in: scnView)
         let hitResults = scnView.hitTest(p, options: [:])
