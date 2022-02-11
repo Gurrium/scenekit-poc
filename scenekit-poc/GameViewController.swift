@@ -19,7 +19,7 @@ class GameViewController: UIViewController {
         super.viewDidLoad()
         
         // create a new scene
-        let scene = SCNScene(named: "art.scnassets/solarSystem.scn")!
+        let scene = SCNScene(named: "art.scnassets/blank.scn")!
         
         // create and add a camera to the scene
         let cameraNode = SCNNode()
@@ -27,14 +27,8 @@ class GameViewController: UIViewController {
         scene.rootNode.addChildNode(cameraNode)
         
         // place the camera
-        cameraNode.position = SCNVector3(x: 0, y: 0, z: 15)
-        
-        // create and add a light to the scene
-        let lightNode = SCNNode()
-        lightNode.light = SCNLight()
-        lightNode.light!.type = .omni
-        lightNode.position = SCNVector3(x: 0, y: 10, z: 10)
-        scene.rootNode.addChildNode(lightNode)
+        cameraNode.position = SCNVector3(x: 0, y: -40, z: 30)
+        cameraNode.eulerAngles = .init(Float.pi / 4, 0, 0)
         
         // create and add an ambient light to the scene
         let ambientLightNode = SCNNode()
@@ -43,16 +37,22 @@ class GameViewController: UIViewController {
         ambientLightNode.light!.color = UIColor.darkGray
         scene.rootNode.addChildNode(ambientLightNode)
 
-        let sun = scene.rootNode.childNode(withName: "sun", recursively: true)!
-        let earth = scene.rootNode.childNode(withName: "earth", recursively: true)!
-        let moon = scene.rootNode.childNode(withName: "moon", recursively: true)!
+        let plane = SCNNode()
+        plane.geometry = SCNPlane(width: 50, height: 50)
+        plane.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "art.scnassets/check.png")
+        plane.geometry?.firstMaterial?.diffuse.contentsTransform = SCNMatrix4MakeScale(10, 10, 0)
+        plane.geometry?.firstMaterial?.diffuse.wrapS = .repeat
+        plane.geometry?.firstMaterial?.diffuse.wrapT = .repeat
+        scene.rootNode.addChildNode(plane)
 
-        earth.pivot = sun.pivot
-        earth.runAction(.moveBy(x: 3, y: 0, z: 0, duration: .zero))
-        earth.runAction(.repeatForever(.rotateBy(x: 0, y: .pi * 2, z: 0, duration: 1)))
-
-//        moon.runAction(.move(to: .init(1, 0, 0), duration: .zero))
-//        moon.runAction(.repeatForever(.rotateBy(x: 0, y: .pi * 2, z: 0, duration: 5)))
+        let box = SCNNode()
+        box.geometry = SCNBox(width: 5, height: 2, length: 2, chamferRadius: 0)
+        scene.rootNode.addChildNode(box)
+        box.runAction(.moveBy(x: -20, y: 0, z: 2, duration: 0))
+        box.runAction(.repeatForever(.sequence([
+            .moveBy(x: 40, y: 0, z: 0, duration: 2),
+            .moveBy(x: -40, y: 0, z: 0, duration: 2)
+        ])))
         
         // set the scene to the view
         scnView.scene = scene
@@ -65,43 +65,6 @@ class GameViewController: UIViewController {
         
         // configure the view
         scnView.backgroundColor = UIColor.black
-        
-        // add a tap gesture recognizer
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
-        scnView.addGestureRecognizer(tapGesture)
-    }
-    
-    @objc
-    func handleTap(_ gestureRecognize: UIGestureRecognizer) {
-        // check what nodes are tapped
-        let p = gestureRecognize.location(in: scnView)
-        let hitResults = scnView.hitTest(p, options: [:])
-        // check that we clicked on at least one object
-        if hitResults.count > 0 {
-            // retrieved the first clicked object
-            let result = hitResults[0]
-            
-            // get its material
-            let material = result.node.geometry!.firstMaterial!
-            
-            // highlight it
-            SCNTransaction.begin()
-            SCNTransaction.animationDuration = 0.5
-            
-            // on completion - unhighlight
-            SCNTransaction.completionBlock = {
-                SCNTransaction.begin()
-                SCNTransaction.animationDuration = 0.5
-                
-                material.emission.contents = UIColor.black
-                
-                SCNTransaction.commit()
-            }
-            
-            material.emission.contents = UIColor.red
-            
-            SCNTransaction.commit()
-        }
     }
     
     override var shouldAutorotate: Bool {
