@@ -9,9 +9,11 @@ import UIKit
 import QuartzCore
 import SceneKit
 
-class GameViewController: UIViewController {
+class GameViewController: UIViewController, SpeedController {
     @IBOutlet weak var sceneView: SCNView!
     @IBOutlet weak var speedControlSlider: UISlider!
+
+    weak var delegate: SpeedControllee?
 
     private let boxInitialPosition = SCNVector3(x: -20, y: 2, z: 0)
 
@@ -41,10 +43,16 @@ class GameViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        setupViews()
+        setup()
     }
+
     @IBAction func onSliderValueChanged() {
-        setCuboidVelocity(Double(speedControlSlider.value))
+        delegate?.onSpeedChanged(speed: Double(speedControlSlider.value))
+    }
+
+    private func setup() {
+        delegate = self
+        setupViews()
     }
 
     private func setupViews() {
@@ -72,34 +80,32 @@ class GameViewController: UIViewController {
             .rotateBy(x: 0, y: 0, z: -.pi / 4, duration: 0)
         ]))
 
-        // set the scene to the view
         sceneView.scene = scene
-
-        // allows the user to manipulate the camera
-        sceneView.allowsCameraControl = true
-
-        // show statistics such as fps and timing information
         sceneView.showsStatistics = true
-
-        // configure the view
-        sceneView.backgroundColor = UIColor.black
+        sceneView.backgroundColor = .black
     }
+}
 
-    /// - Parameters:
-    ///   - velocity: [point/sec]
-    private func setCuboidVelocity(_ velocity: Double) {
+extension GameViewController: SpeedControllee {
+    func onSpeedChanged(speed: Double) {
         let distance = Double(abs(boxInitialPosition.x * 2))
         box.removeAllActions()
         box.runAction(.sequence([
             .move(to: boxInitialPosition, duration: .zero),
             .repeatForever(.sequence([
-                .move(by: .init(distance, 0, 0), duration: distance / velocity),
-                .move(to: boxInitialPosition, duration: distance / velocity)
+                .move(by: .init(distance, 0, 0), duration: distance / speed),
+                .move(to: boxInitialPosition, duration: distance / speed)
             ]))
         ]))
     }
 }
 
 protocol SpeedController {
-    var onSpeedChanged: (Double) -> Void { get set }
+    var delegate: SpeedControllee? { get set }
+}
+
+protocol SpeedControllee: AnyObject {
+    /// - Parameters:
+    ///   - velocity: [point/sec]
+    func onSpeedChanged(speed: Double)
 }
