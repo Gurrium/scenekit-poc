@@ -17,20 +17,43 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <sceneKitView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XMf-3Z-ecf">
-                                <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="730"/>
                             </sceneKitView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EkG-2W-F87">
+                                <rect key="frame" x="0.0" y="730" width="414" height="132"/>
+                                <subviews>
+                                    <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="50" continuous="NO" minimumValueImage="play" catalog="system" maximumValueImage="forward" translatesAutoresizingMaskIntoConstraints="NO" id="Pg2-02-2Ad">
+                                        <rect key="frame" x="6" y="51" width="402" height="31"/>
+                                        <color key="tintColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                        <connections>
+                                            <action selector="onSliderValueChanged" destination="BV1-FR-VrT" eventType="valueChanged" id="GuP-o7-1ED"/>
+                                        </connections>
+                                    </slider>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="Pg2-02-2Ad" secondAttribute="trailing" constant="8" id="9Hu-JG-KgN"/>
+                                    <constraint firstItem="Pg2-02-2Ad" firstAttribute="leading" secondItem="EkG-2W-F87" secondAttribute="leading" constant="8" id="Oue-u1-xXv"/>
+                                    <constraint firstItem="Pg2-02-2Ad" firstAttribute="centerY" secondItem="EkG-2W-F87" secondAttribute="centerY" id="Xy3-jN-AvJ"/>
+                                    <constraint firstAttribute="height" constant="132" id="grN-Y7-22A"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="10g-41-hzD"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="XMf-3Z-ecf" firstAttribute="top" secondItem="P3f-G9-5T5" secondAttribute="top" id="7JW-Hk-S3m"/>
-                            <constraint firstAttribute="bottom" secondItem="XMf-3Z-ecf" secondAttribute="bottom" id="8CP-mf-8Oz"/>
+                            <constraint firstItem="EkG-2W-F87" firstAttribute="leading" secondItem="10g-41-hzD" secondAttribute="leading" id="8hh-zj-fd8"/>
                             <constraint firstItem="10g-41-hzD" firstAttribute="trailing" secondItem="XMf-3Z-ecf" secondAttribute="trailing" id="T3m-Oc-XEQ"/>
+                            <constraint firstItem="EkG-2W-F87" firstAttribute="top" secondItem="XMf-3Z-ecf" secondAttribute="bottom" id="XyE-nb-KbO"/>
                             <constraint firstItem="XMf-3Z-ecf" firstAttribute="leading" secondItem="10g-41-hzD" secondAttribute="leading" id="Zqz-OV-0Zs"/>
+                            <constraint firstItem="10g-41-hzD" firstAttribute="bottom" secondItem="EkG-2W-F87" secondAttribute="bottom" id="i2O-HR-MbV"/>
+                            <constraint firstItem="EkG-2W-F87" firstAttribute="trailing" secondItem="10g-41-hzD" secondAttribute="trailing" id="zhO-OZ-XUl"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="sceneView" destination="XMf-3Z-ecf" id="r0p-y7-VmW"/>
+                        <outlet property="speedControlSlider" destination="Pg2-02-2Ad" id="oOO-60-Feo"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SZV-WD-TEh" sceneMemberID="firstResponder"/>
@@ -39,6 +62,8 @@
         </scene>
     </scenes>
     <resources>
+        <image name="forward" catalog="system" width="128" height="79"/>
+        <image name="play" catalog="system" width="120" height="128"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
